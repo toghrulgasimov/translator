@@ -101,6 +101,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
 
     if (request.type === "translate") {
+      let cc = await getMap(request.word);
+      if(setting.data["cache"] == 1 && await cc != null) {
+        sendResponse({
+          translatedText: cc,
+          sourceLang: "en",
+          targetLang: "az",
+        });
+      }
       var translatedResult = await doTranslate(
         request.word,
         request.translateTarget,
@@ -162,7 +170,7 @@ function swap(json) {
 
 async function doTts(word, lang, ttsVolume,ttsRate) {
   var voice =setting.data["ttsVoice_"+lang]
-
+  console.log("------------in doTts")
   chrome.tts.speak(word, {
     lang: lang,
     voiceName: voice,
@@ -190,17 +198,6 @@ async function getMap(t1) {
   return mm["tg5"][t1];
 }
 async function doTranslate(text, targetLang, fromLang, translatorVendor) {
-  if(setting.data["cc"] == null) {
-    setting.data["cc"] = {}
-  }
-  let cc = await getMap(text);
-  if(setting.data["cache"] == 1 && await cc != null) {
-    return {
-      translatedText: cc,
-      sourceLang: fromLang,
-      targetLang: targetLang,
-    };
-  }
 
   try {
     var translate;
