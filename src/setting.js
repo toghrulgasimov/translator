@@ -3,6 +3,9 @@
 import { parse } from "bcp-47";
 
 var defaultList = {
+  delay: 100,
+  cache: 1,
+  cc: {},
   useTooltip: "true",
   useTTS: "false",
   translateWhen: "mouseoverselect",

@@ -330,6 +330,9 @@ var langList = {
 var langListWithAuto = Object.assign({ Auto: "auto" }, langList); //copy lang and add auto
 var langListOpposite=swap(langList);
 
+var delayList=getRangeOption2(0,2000,10);
+var cacheList=getRangeOption2(0,1,1);
+
 var toggleList = {
   On: "true",
   Off: "false",
@@ -480,6 +483,14 @@ var tooltipTextAlignList={
 }
 
 var settingListData = {
+  delay: {
+    description: "Delay",  // public/_locales/en/messages.json is used 
+    optionList: delayList,
+  },
+  cache: {
+    description: "Cache",  // public/_locales/en/messages.json is used 
+    optionList: cacheList,
+  },
   useTooltip: {
     description: chrome.i18n.getMessage("Enable_Tooltip"),  // public/_locales/en/messages.json is used 
     optionList: toggleList,
@@ -624,6 +635,13 @@ function getRangeOption(start,end,scale,roundOff) {
   for (let i = start; i < end; i++) {
     var num=String((i*scale).toFixed(roundOff));
     optionList[num] = num;
+  }
+  return optionList;
+}
+function getRangeOption2(start,end,scale) {
+  var optionList={};
+  for (let i = start; i <= end; i+=scale) {
+    optionList[i] = i;
   }
   return optionList;
 } 

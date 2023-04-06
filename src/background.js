@@ -141,7 +141,7 @@ function recordHistory(request, force = false) {
       targetText: request.targetText,
     });
     //remove when too many list
-    if (setting.data["historyList"].length > 100) {
+    if (setting.data["historyList"].length > 5000) {
       setting.data["historyList"].pop();
     }
     setting.save();
@@ -176,7 +176,32 @@ async function doTts(word, lang, ttsVolume,ttsRate) {
 let bingAccessToken;
 let bingBaseUrl = "https://www.bing.com/ttranslatev3?isVertical=1\u0026&";
 
+async function setMap(t1, t2) {
+  let mm = await chrome.storage.local.get("tg5")
+  mm["tg5"][t1] = t2;
+  await chrome.storage.local.set({tg5: mm["tg5"]});
+}
+async function getMap(t1) {
+  let mm = await chrome.storage.local.get("tg5")
+  if(mm.tg5 == undefined) {
+    mm.tg5 = {}
+    await chrome.storage.local.set({tg5: mm["tg5"]});
+  }
+  return mm["tg5"][t1];
+}
 async function doTranslate(text, targetLang, fromLang, translatorVendor) {
+  if(setting.data["cc"] == null) {
+    setting.data["cc"] = {}
+  }
+  let cc = await getMap(text);
+  if(setting.data["cache"] == 1 && await cc != null) {
+    return {
+      translatedText: cc,
+      sourceLang: fromLang,
+      targetLang: targetLang,
+    };
+  }
+
   try {
     var translate;
     if (translatorVendor == "google") {
@@ -192,7 +217,7 @@ async function doTranslate(text, targetLang, fromLang, translatorVendor) {
       targetLang,
       fromLang
     );
-
+    setMap(text, translatedText)
     return {
       translatedText: translatedText,
       sourceLang: detectedLang,

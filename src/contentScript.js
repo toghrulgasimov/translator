@@ -65,7 +65,7 @@ function startMouseoverDetector() {
       let word = getMouseOverWord(clientX, clientY);
       await processWord(word, "mouseover");
     }
-  }, 700);
+  }, setting.data["delay"]);
 }
 
 //determineTooltipShowHide based on selection
